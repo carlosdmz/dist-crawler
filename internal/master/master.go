@@ -5,9 +5,9 @@ import (
 	"net/rpc"
 )
 
-func InitMaster(addr string) {
+func InitMaster(addr *string) {
 	log.Println("Master started.")
-	node := callNode(addr)
+	node := callNode(*addr)
 
 	var reply bool
 	err := node.Call("Crawler.Respond","", &reply)

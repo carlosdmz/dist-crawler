@@ -25,7 +25,7 @@ var(
 func main() {
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 	case masterMode.FullCommand():
-		master.InitMaster()
+		master.InitMaster(nodesAddr)
 	case nodeMode.FullCommand():
 		node.InitNode()
 	case standaloneMode.FullCommand():
