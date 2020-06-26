@@ -17,9 +17,9 @@ var(
 
 	masterMode  			= app.Command("master", "Master mode.")
 	seedMasterMode			= masterMode.Arg("seed", "Initial URL to be called upon.").Required().String()
+	nodesAddr  				= masterMode.Flag("nodesAddr", "Nodes host and port.").Required().String()
 
 	nodeMode    			= app.Command("node", "Node mode.")
-	masterAddr  			= nodeMode.Flag("masterAddr", "Master host and port.").Required().String()
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	case masterMode.FullCommand():
 		master.InitMaster()
 	case nodeMode.FullCommand():
-		node.InitNode(*masterAddr)
+		node.InitNode()
 	case standaloneMode.FullCommand():
 		standalone.InitStandAlone()
 	}

@@ -1,7 +1,35 @@
 package node
 
-import "fmt"
+import (
+	"github.com/carlosdamazio/dist-crawler/internal/crawler"
+	"log"
+	"net"
+	"net/rpc"
+)
 
-func InitNode(master string) {
-	fmt.Printf("Node started, pointing to master at %s", master)
+func InitNode() {
+	log.Println("Node server starting...")
+	startServer("0.0.0.0:13372")
+}
+
+func startServer(addr string) {
+	resolve, err := net.ResolveTCPAddr("tcp", addr)
+	if err != nil {
+		log.Fatal("startServer:", err)
+	}
+
+	server, err := net.ListenTCP("tcp", resolve)
+	if err != nil {
+		log.Fatal("startServer:", err)
+	}
+
+	crawlerType := new(crawler.Crawler)
+	err = rpc.Register(crawlerType)
+
+	if err != nil {
+		log.Fatal("startServer:", err)
+	}
+
+	log.Println("Node is started.")
+	rpc.Accept(server)
 }
