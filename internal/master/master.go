@@ -5,15 +5,28 @@ import (
 	"net/rpc"
 )
 
-func InitMaster(addr *string) {
+type Reply struct {
+	Status string
+	Data string
+}
+
+func InitMaster(addr *string, seed *string) {
 	log.Println("Master started.")
 	node := callNode(*addr)
 
-	var reply bool
-	err := node.Call("Crawler.Respond","", &reply)
+	var reply Reply
+
+	err := node.Call("Crawler.Respond", seed, &reply)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(reply.Status)
+
+	err = node.Call("Crawler.Request", seed, &reply)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(reply.Status)
 }
 
 func electNode() {
@@ -29,6 +42,5 @@ func callNode(addr string) *rpc.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	return node
 }
