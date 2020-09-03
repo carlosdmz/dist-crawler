@@ -1,4 +1,6 @@
 # Dist-crawler
+[![carlosdamazio](https://circleci.com/gh/carlosdamazio/dist-crawler.svg?style=svg)](https://circleci.com/gh/carlosdamazio/dist-crawler)
+
 A try on a distributed web crawler built upon RPC communication protocol.
 
 ## What is it, really?
@@ -24,3 +26,4 @@ $ ./dist-crawler node
 
 # On another instance, run the master
 $ ./dist-crawler master --nodesAddr=localhost:13372 http://damazio.dev
+[![<ORG_NAME>](https://circleci.com/<VCS>/<ORG_NAME>/<PROJECT_NAME>.svg?style=svg)](<LINK>)
