@@ -26,4 +26,3 @@ $ ./dist-crawler node
 
 # On another instance, run the master
 $ ./dist-crawler master --nodesAddr=localhost:13372 http://damazio.dev
-[![<ORG_NAME>](https://circleci.com/<VCS>/<ORG_NAME>/<PROJECT_NAME>.svg?style=svg)](<LINK>)
