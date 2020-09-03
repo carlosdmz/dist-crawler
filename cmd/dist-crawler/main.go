@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/carlosdamazio/dist-crawler/internal/master"
-	"github.com/carlosdamazio/dist-crawler/internal/node"
-	"github.com/carlosdamazio/dist-crawler/internal/standalone"
+	"github.com/carlosdamazio/dist-crawler/pkg/master"
+	"github.com/carlosdamazio/dist-crawler/pkg/node"
+	"github.com/carlosdamazio/dist-crawler/pkg/standalone"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 	"os"
 )

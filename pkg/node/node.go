@@ -1,7 +1,7 @@
 package node
 
 import (
-	"github.com/carlosdamazio/dist-crawler/internal/crawler"
+	"github.com/carlosdamazio/dist-crawler/pkg/crawler"
 	"log"
 	"net"
 	"net/rpc"

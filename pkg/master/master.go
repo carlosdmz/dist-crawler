@@ -3,18 +3,16 @@ package master
 import (
 	"log"
 	"net/rpc"
-)
 
-type Reply struct {
-	Status string
-	Data string
-}
+	"github.com/carlosdamazio/dist-crawler/pkg/crawler"
+)
 
 func InitMaster(addr *string, seed *string) {
 	log.Println("Master started.")
 	node := callNode(*addr)
 
-	var reply Reply
+	var reply crawler.Reply
+	var crawlReply crawler.CrawlReply
 
 	err := node.Call("Crawler.Respond", seed, &reply)
 	if err != nil {
@@ -27,6 +25,12 @@ func InitMaster(addr *string, seed *string) {
 		log.Fatal(err)
 	}
 	log.Println(reply.Status)
+
+	err = node.Call("Crawler.Crawl", reply.Data, &crawlReply)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(crawlReply.Data)
 }
 
 func electNode() {

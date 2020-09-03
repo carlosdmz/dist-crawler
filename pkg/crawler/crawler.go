@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/mvdan/xurls"
 )
 
 type Crawler int
@@ -14,6 +16,10 @@ type Reply struct {
 	Data string
 }
 
+type CrawlReply struct {
+	Status string
+	Data []string
+}
 
 func (c *Crawler) Respond(seed string, reply *Reply) error {
 	*reply = Reply{Status: fmt.Sprintf("Node Crawler is listening and ready to crawl its initial seeds like: %s", seed), Data: ""}
@@ -48,8 +54,16 @@ func (c *Crawler) Request(url string, reply *Reply)  error {
 
 	return nil
 }
-/*
-func (c *Crawler) Crawl() []string {
 
+func (c *Crawler) Crawl(data string, reply *CrawlReply) error {
+	strictSearcher := xurls.Strict
+	urls := strictSearcher.FindAllString(data, -1)
+
+	if urls == nil {
+		log.Fatalf("Crawler.Crawl: when processing data: Did not find any URLs within page.")
+		return nil
+	}
+
+	*reply = CrawlReply{Status: "OK", Data: urls}
+	return nil
 }
- */
