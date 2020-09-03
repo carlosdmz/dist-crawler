@@ -32,14 +32,14 @@ func (c *Crawler) Request(url string, reply *Reply)  error {
 	res, err := http.Get(url)
 
 	if err != nil {
-		log.Fatalf("Crawler.Request: when processing %s: %v", err)
+		log.Fatalf("Crawler.Request: when processing %s: %v", url, err)
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			log.Fatalf("Crawler.Request: when processing %s: %v", err)
+			log.Fatalf("Crawler.Request: when processing %s: %v", url, err)
 			return err
 		}
 
@@ -48,7 +48,7 @@ func (c *Crawler) Request(url string, reply *Reply)  error {
 		log.Println(reply.Status)
 		return nil
 	} else {
-		log.Fatalf("Crawler.Request: when processing %s: HTTP status code was different than OK (200)", err)
+		log.Fatalf("Crawler.Request: when processing %s: HTTP status code was different than OK (200)", url)
 		return nil
 	}
 
