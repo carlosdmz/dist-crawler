@@ -12,22 +12,36 @@ func InitNode() {
 	startServer("0.0.0.0:13372")
 }
 
-func startServer(addr string) {
+func resolveAddr(addr string) (*net.TCPAddr, error) {
 	resolve, err := net.ResolveTCPAddr("tcp", addr)
-	if err != nil {
-		log.Fatal("startServer:", err)
-	}
+	return resolve, err
+}
 
-	server, err := net.ListenTCP("tcp", resolve)
-	if err != nil {
-		log.Fatal("startServer:", err)
-	}
+func TCPListen(network string, resolver *net.TCPAddr) (*net.TCPListener, error){
+	server, err := net.ListenTCP(network, resolver)
+	return server, err
+}
 
+func registerCrawler() error {
 	crawlerType := new(crawler.Crawler)
-	err = rpc.Register(crawlerType)
+	err := rpc.Register(crawlerType)
+	return err
+}
 
+func startServer(addr string) {
+	resolve, err := resolveAddr(addr)
 	if err != nil {
-		log.Fatal("startServer:", err)
+		log.Panic("startServer:", err)
+	}
+
+	server, err := TCPListen("tcp", resolve)
+	if err != nil {
+		log.Panic("startServer:", err)
+	}
+
+	err = registerCrawler()
+	if err != nil {
+		log.Panic("startServer:", err)
 	}
 
 	log.Println("Node is started.")
