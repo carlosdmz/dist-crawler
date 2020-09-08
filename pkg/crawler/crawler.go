@@ -64,6 +64,8 @@ func (c *Crawler) Crawl(data string, reply *CrawlReply) error {
 		return nil
 	}
 
+
+
 	*reply = CrawlReply{Status: "OK", Data: urls}
 	return nil
 }
