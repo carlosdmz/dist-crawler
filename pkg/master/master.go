@@ -18,7 +18,7 @@ func InitMaster(addr *string, seed *string) {
 	iterations := 50
 
 	log.Println("Master started.")
-	node := callNode(*addr)
+	node := callNode(addr)
 
 	err := node.Call("Crawler.Respond", visitedUrl, &reply)
 	if err != nil {
@@ -63,12 +63,12 @@ func electNode() {
 	log.Println("Electing a node...")
 }
 
-func callNode(addr string) *rpc.Client {
+func callNode(addr *string) *rpc.Client {
 	// Might elect a node to seed...
 	electNode()
 
 	log.Println("Checking if a node responds...")
-	node, err := rpc.Dial("tcp", addr)
+	node, err := rpc.Dial("tcp", *addr)
 	if err != nil {
 		log.Fatal(err)
 	}
