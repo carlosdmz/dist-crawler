@@ -26,19 +26,19 @@ func InitMaster(addr string, seed string) {
 	}
 	log.Println(reply.Status)
 
-	for iterations > 0 {
+	for ; iterations > 0 ;{
 		url, err := url.Parse(visitedUrl)
-		domain := "http://" + url.Hostname()
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		if utils.FindDuplicateDomain(domain, visitedDomains) {
-			visitedUrl, frontier = frontier[0], frontier[1:]
+		
+        domain := url.Hostname()
+		
+        if utils.FindDuplicateDomain(domain, visitedDomains) {
+			visitedUrl, frontier = frontier[0], frontier[0:]
 			iterations--
 		} else {
-
-			err = node.Call("Crawler.Request", domain, &reply)
+			err = node.Call("Crawler.Request", url.String(), &reply)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -47,13 +47,12 @@ func InitMaster(addr string, seed string) {
 			visitedDomains = append(visitedDomains, domain)
 			log.Println(visitedDomains)
 
+            log.Println("Calling crawl function")
 			err = node.Call("Crawler.Crawl", reply.Data, &crawlReply)
 			if err != nil {
 				log.Fatal(err)
 			}
 			frontier = append(frontier, crawlReply.Data...)
-			visitedUrl, frontier = frontier[0], frontier[1:]
-			log.Println(len(frontier))
 			iterations--
 		}
 	}

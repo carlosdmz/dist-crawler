@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+    xurls "mvdan.cc/xurls"
 )
 
 type Crawler int
@@ -34,31 +36,39 @@ func (c *Crawler) Request(url string, reply *Reply) error {
 	log.Printf("Master requested to crawl %s frontier...", url)
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatalf("dist-crawler: when processing %s: %v", url, err)
-		return err
+	    goto ERROR
 	}
-	err = res.Body.Close()
+
+	if res.StatusCode < http.StatusBadRequest {
+		bodyBytes, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+		    goto ERROR
+        }
+		bodyString := string(bodyBytes)
+		reply.Status = "OK"
+        reply.Data = bodyString
+
+	} else {
+		log.Printf("Crawler.Request: when processing %s: HTTP status code was different than OK (200)", url)
+		return errors.New("dist-crawler: HTTP Code was different than 200")
+	}
+	
+    err = res.Body.Close()
 	if err != nil {
 		log.Fatalf("dist-crawler: could not close body reader")
 		return err
 	}
+    return nil
 
-	if res.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			log.Fatalf("dist-crawler: when processing %s: %v", url, err)
-			return err
-		}
-		bodyString := string(bodyBytes)
-		reply = &Reply{Status: "OK", Data: bodyString}
-		log.Println(reply.Status)
-		return nil
-	} else {
-		log.Fatalf("Crawler.Request: when processing %s: HTTP status code was different than OK (200)", url)
-		return errors.New("dist-crawler: HTTP Code was different than 200")
-	}
+ERROR:
+    log.Fatalf("dist-crawler: when processing %s: %v", url, err)
+    return err
+    
 }
 
 func (c *Crawler) Crawl(data string, reply *CrawlReply) error {
-	return nil
+    strict := xurls.Strict
+    reply.Data = strict.FindAllString(data, -1)
+    log.Println(reply.Data)
+    return nil
 }
