@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+    "fmt"
     "os"
     "github.com/carlosdamazio/dist-crawler/pkg/standalone"
     "github.com/carlosdamazio/dist-crawler/pkg/node"
