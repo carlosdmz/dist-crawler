@@ -1,34 +1,47 @@
 package main
 
 import (
-	"github.com/carlosdamazio/dist-crawler/pkg/master"
-	"github.com/carlosdamazio/dist-crawler/pkg/node"
-	"github.com/carlosdamazio/dist-crawler/pkg/standalone"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
-	"os"
-)
-
-
-var(
-	app         			= kingpin.New("dist-crawler", "Distributed Web Crawler.")
-
-	standaloneMode  		= app.Command("standalone", "Standalone mode.")
-	seedStandAloneMode		= standaloneMode.Arg("seed", "Initial URL to be called upon.").Required().String()
-
-	masterMode  			= app.Command("master", "Master mode.")
-	seedMasterMode			= masterMode.Arg("seed", "Initial URL to be called upon.").Required().String()
-	nodesAddr  				= masterMode.Flag("nodesAddr", "Nodes host and port.").Required().String()
-
-	nodeMode    			= app.Command("node", "Node mode.")
+	"fmt"
+    "os"
+    "github.com/carlosdamazio/dist-crawler/pkg/standalone"
+    "github.com/carlosdamazio/dist-crawler/pkg/node"
+    "github.com/carlosdamazio/dist-crawler/pkg/master"
+    "github.com/carlosdamazio/dist-crawler/pkg/utils"
 )
 
 func main() {
-	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
-	case masterMode.FullCommand():
-		master.InitMaster(nodesAddr, seedMasterMode)
-	case nodeMode.FullCommand():
-		node.InitNode()
-	case standaloneMode.FullCommand():
-		standalone.InitStandAlone()
+    if len(os.Args) <= 1 {
+        fmt.Fprintf(os.Stderr, "Error: insufficient arguments for program\n\n")
+        utils.PrintUsage()
+        os.Exit(1)
 	}
+    args := utils.InitArgs()
+
+    switch args["mode"] {
+        case "main":
+            if args["node"] == "" || args["seed"] == "" {
+                fmt.Fprintf(os.Stderr, "Error: invalid argument set\n")
+                utils.PrintMainNodeUsage()
+                goto FINISH
+            }
+            
+            master.InitMaster(args["node"], args["seed"]) 
+        case "node":
+            // no checks, just ignore additional flags
+            node.InitNode()
+        case "standalone":
+            if args["seed"] == "" {
+                fmt.Fprintf(os.Stderr, "Error: invalid argument set\n")
+                utils.PrintMainNodeUsage()
+                goto FINISH
+            }
+
+            standalone.InitStandAlone()
+        default:
+            fmt.Fprintf(os.Stderr, "Error: invalid crawler mode\n\n")
+            utils.PrintUsage()
+            goto FINISH
+    }
+FINISH:
+    os.Exit(1)
 }

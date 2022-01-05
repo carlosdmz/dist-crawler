@@ -9,12 +9,12 @@ import (
 	"github.com/carlosdamazio/dist-crawler/pkg/utils"
 )
 
-func InitMaster(addr *string, seed *string) {
+func InitMaster(addr string, seed string) {
 	var reply crawler.Reply
 	var crawlReply crawler.CrawlReply
 	var frontier []string
 	var visitedDomains []string
-	visitedUrl := *(seed)
+	visitedUrl := seed
 	iterations := 50
 
 	log.Println("Master started.")
@@ -63,12 +63,12 @@ func electNode() {
 	log.Println("Electing a node...")
 }
 
-func callNode(addr *string) *rpc.Client {
+func callNode(addr string) *rpc.Client {
 	// Might elect a node to seed...
 	electNode()
 
 	log.Println("Checking if a node responds...")
-	node, err := rpc.Dial("tcp", *addr)
+	node, err := rpc.Dial("tcp", addr)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/mvdan/xurls"
 )
 
 type Crawler int
@@ -31,7 +29,7 @@ func (c *Crawler) Respond(seed string, reply *Reply) error {
 	return nil
 }
 
-func (c *Crawler) Request(url string, reply *Reply)  error {
+func (c *Crawler) Request(url string, reply *Reply) error {
 	//Node makes a request for URL in frontier to grab data. It returns the response's body.
 	log.Printf("Master requested to crawl %s frontier...", url)
 	res, err := http.Get(url)
@@ -59,16 +57,8 @@ func (c *Crawler) Request(url string, reply *Reply)  error {
 		log.Fatalf("Crawler.Request: when processing %s: HTTP status code was different than OK (200)", url)
 		return errors.New("dist-crawler: HTTP Code was different than 200")
 	}
-	return nil
 }
 
 func (c *Crawler) Crawl(data string, reply *CrawlReply) error {
-	strictSearcher := xurls.Strict
-	urls := strictSearcher.FindAllString(data, -1)
-	if urls == nil {
-		log.Fatalf("dist-crawler: when processing data: Did not find any URLs within page.")
-		return nil
-	}
-	reply = &CrawlReply{Status: "OK", Data: urls}
 	return nil
 }
